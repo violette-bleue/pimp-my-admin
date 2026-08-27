@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "Pimp my Admin",
+  "version": "0.1.0",
+  "description": "Extension quality of life pour les actions laborieuses et répétitives dans le panneau d'administration de son forumactif",
+  "author": "misenasha",
+  "homepage_url": "https://pimpmyforum.forumactif.com/",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://api.github.com/*",
+    "https://raw.githubusercontent.com/*",
+    "*://*.forumactif.com/admin/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["*://*.forumactif.com/admin/*"],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "modules/shared/dom.js",
+        "modules/shared/idb.js",
+        "modules/shared/util.js",
+        "modules/shared/categories.js",
+        "modules/shared/panel.js",
+        "modules/shared/tabs.js",
+        "modules/source/source.js",
+        "modules/templates-sync/network.js",
+        "modules/templates-sync/scan-cache.js",
+        "modules/templates-sync/edit-page.js",
+        "modules/templates-sync/export.js",
+        "modules/templates-sync/inventory.js",
+        "modules/templates-sync/full-scan.js",
+        "modules/templates-sync/category-tab.js",
+        "modules/templates-sync/list-page.js",
+        "modules/templates-sync/mirror-sync.js"
+      ],
+      "matches": ["*://*.forumactif.com/*"]
+    }
+  ]
+}

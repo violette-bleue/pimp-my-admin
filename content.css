@@ -1,0 +1,749 @@
+@import url("https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&family=Krub:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+
+/* ========================================================================== */
+
+:root {
+  /* Motion */
+  --transition: all 200ms ease;
+
+  /* Fonts */
+  --fontbody: "Krub", sans-serif;
+  --fontmono: "Kode Mono", monospace;
+
+  /* Font sizes */
+  --fspetit: 10px;
+  --fsmoyen: 12px;
+  --fsgros : 14px;
+
+  /* Spacing */
+  --gap    : 4px;
+  --padding: 8px;
+  --margin : 16px;
+
+  /* Radius */
+  --radius: 0;
+
+  /* Layout */
+  --panelw    : 340px;
+  --pagemargin: 260px;
+  --zpanel    : 999999;
+
+  /* Colors */
+  --bg          : #1e1e2e;
+  --overlay     : rgba(0, 0, 0, 0.3);
+  --text        : #eee;
+  --text-muted  : #a6adc8;
+  --text-summary: #656571;
+  --text-accent : #000;
+  --border-c    : #45475a;
+
+  --color1: #af7aff;
+  --color2: #ea93d8;
+  --color3: #c6a3ff;
+  --color4: #ff7cba;
+  --color5: #ffd400;
+  --color6: #f5dca0;
+  --color7: #9c4dff7a;
+
+  --gradient : linear-gradient(270deg, var(--color1), var(--color2));
+  --gradient2: linear-gradient(90deg, var(--color3) 0%, var(--color2) 150%);
+  --gradient3: linear-gradient(45deg, var(--color3) 0%, var(--color4) 100%, var(--color5) 110%);
+
+  --status-same              : #2d5a3d;
+  --status-diff              : #6b4a1e;
+  --status-missing           : #a84343;
+  --status-diff-bg-admin     : #fff0b4;
+  --status-missing-text-admin: #22689f;
+
+  --sync: #00bd66;
+
+  --bg2            : #54f3524f;
+  --checkbox-bg    : rgb(230, 229, 229);
+  --checkbox-border: #a8c82b;
+}
+
+/* ==========================================================================
+   Base / reset
+   ========================================================================== */
+body:has(#pma-panel) {
+  margin-right: var(--pagemargin);
+}
+
+#pma-panel * {
+  transition: var(--transition);
+}
+
+#pma-panel [hidden] {
+  display: none;
+}
+
+/* ==========================================================================
+   État verrouillé (action bloquante en cours, ex. export)
+   ========================================================================== */
+#pma-panel.pma-locked button,
+#pma-panel.pma-locked input {
+  pointer-events: none;
+  opacity       : 0.5;
+}
+
+/* ==========================================================================
+   Icônes / helpers inline
+   ========================================================================== */
+.pma-icon {
+  width         : 20px;
+  height        : auto;
+  flex-shrink   : 0;
+  vertical-align: middle;
+}
+
+.pma-icon-label {
+  display    : inline-flex;
+  align-items: center;
+  gap        : var(--gap);
+}
+
+/* ==========================================================================
+   Panel shell
+   ========================================================================== */
+#pma-panel {
+  position          : fixed;
+  height            : 100vh;
+  top               : 0;
+  right             : 0;
+  z-index           : var(--zpanel);
+  width             : var(--panelw);
+  background        : var(--bg);
+  border-radius     : var(--radius);
+  box-shadow        : 0 4px 16px var(--overlay);
+  font-family       : var(--fontbody);
+  font-size         : var(--fsmoyen);
+  transition        : var(--transition);
+  display           : grid;
+  grid-template-rows: auto 1fr;
+  min-height        : 0;
+}
+
+#pma-body {
+  padding       : 0;
+  display       : flex;
+  flex-direction: column;
+  gap           : var(--padding);
+  background    : var(--gradient2);
+  height        : stretch;
+  min-height    : 0;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+#pma-header {
+  display      : flex;
+  align-items  : center;
+  gap          : var(--padding);
+  padding      : var(--padding) var(--margin);
+  background   : var(--bg);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+#pma-header-source {
+  margin-left   : auto;
+  display       : flex;
+  align-items   : center;
+  font-size     : var(--fspetit);
+  opacity       : 0.5;
+  flex-direction: column;
+  color         : var(--text-muted);
+}
+
+#pma-logo {
+  width        : 28px;
+  height       : 28px;
+  border-radius: var(--radius);
+  flex-shrink  : 0;
+}
+
+#pma-title {
+  font-family    : var(--fontmono);
+  font-weight    : bold;
+  background     : var(--gradient);
+  background-clip: text;
+  color          : transparent;
+}
+
+#pma-vitrine-link {
+  display        : flex;
+  align-items    : center;
+  gap            : var(--gap);
+  color          : var(--text-muted);
+  text-decoration: none;
+  font-size      : var(--fsmoyen);
+}
+
+#pma-vitrine-link:hover {
+  color: var(--color6);
+}
+
+/* ==========================================================================
+   Boutons, inputs & labels (génériques)
+   ========================================================================== */
+#pma-panel button,
+#pma-panel input {
+  font-family: var(--fontbody);
+}
+
+#pma-panel button {
+  cursor     : pointer;
+  display    : flex;
+  margin     : 0;
+  border     : none;
+  line-height: normal;
+  color      : var(--text);
+}
+
+#pma-panel button,
+#pma-panel label {
+  max-width    : 100%;
+  display      : flex;
+  font-size    : var(--fspetit);
+  font-weight  : 700;
+  padding      : var(--gap) var(--gap);
+  align-items  : center;
+  white-space  : pre-line;
+  border-radius: var(--radius);
+}
+
+#pma-panel .pma-tab-panel button {
+  border-radius  : 0;
+  background     : var(--gradient3);
+  box-shadow     : 0 0 5px var(--color7);
+  height         : 50px;
+  font-size      : var(--fsmoyen);
+  font-weight    : 100;
+  background-size: 100%;
+  transition     : var(--transition);
+}
+
+#pma-panel .pma-tab-panel button:hover {
+  background-size: 140%;
+}
+
+#pma-panel .pma-tab-panel button:hover img {
+  transform: translate(0px, -5px);
+}
+
+.pma-tab-panel button,
+.pma-tab-panel label {
+  display   : flex;
+  text-align: left;
+  gap       : var(--gap);
+}
+
+/* ==========================================================================
+   Actions & hints
+   ========================================================================== */
+#pma-actions,
+.pma-actions {
+  display  : flex;
+  gap      : var(--padding);
+  flex-wrap: wrap;
+}
+
+#pma-auth-hint {
+  font-size: var(--fsmoyen);
+  opacity  : 0.85;
+}
+
+.pma-auth-row-check {
+  margin-right: var(--padding);
+}
+
+/* ==========================================================================
+   Source / dossier
+   ========================================================================== */
+#pma-folder {
+  display        : flex;
+  align-items    : center;
+  justify-content: space-between;
+  gap            : var(--padding);
+  font-size      : var(--fsmoyen);
+  grid-area      : 1 / 1 / 1 / 3;
+}
+
+#pma-folder button {
+  height : max-content !important;
+  padding: var(--gap);
+}
+
+#pma-folder span {
+  background   : var(--bg);
+  border-radius: var(--radius);
+  padding      : var(--gap) var(--gap);
+  color        : var(--text);
+  width        : stretch;
+}
+
+/* ==========================================================================
+   Badges de statut
+   ========================================================================== */
+.pma-badge {
+  display      : flex;
+  align-items  : center;
+  gap          : var(--padding);
+  padding      : var(--padding) var(--margin);
+  border-radius: var(--radius);
+  font-weight  : bold;
+}
+
+.pma-badge--loading {
+  background: var(--border-c);
+}
+
+.pma-badge--same {
+  background: var(--status-same);
+}
+
+.pma-badge--diff {
+  background: var(--status-diff);
+}
+
+.pma-badge--missing {
+  background: var(--status-missing);
+}
+
+/* ==========================================================================
+   Onglets (shell)
+   ========================================================================== */
+.pma-tabs {
+  display           : grid;
+  grid-template-rows: auto 1fr;
+  min-height        : 0;
+  overflow          : hidden;
+  height            : stretch;
+}
+
+.pma-tabs-nav {
+  display  : flex;
+  gap      : 0;
+  flex-wrap: nowrap;
+}
+
+#pma-panel button.pma-tab-btn {
+  background : var(--color1);
+  margin     : 0;
+  padding    : var(--margin);
+  font-family: var(--fontmono);
+}
+
+#pma-panel button.pma-tab-btn.pma-tab-btn--active {
+  background : none;
+  color      : var(--text-accent);
+  font-weight: bold;
+}
+
+.pma-tab-panel[hidden] {
+  display: none;
+}
+
+.pma-tab-panel {
+  display       : flex;
+  flex-direction: column;
+  gap           : var(--padding);
+  padding       : var(--margin) var(--margin);
+  min-height    : 0;
+  overflow-y    : auto;
+  height        : stretch;
+  margin-bottom : 100px;
+}
+
+.pma-tab-placeholder {
+  font-size : var(--fsmoyen);
+  opacity   : 0.7;
+  font-style: italic;
+}
+
+/* ==========================================================================
+   Scan complet (onglet "Toutes les catégories")
+   ========================================================================== */
+#pma-scan {
+  display              : grid;
+  gap                  : var(--padding);
+  grid-template-rows   : auto 20fr 1fr;
+  grid-template-columns: repeat(2, auto);
+  height               : stretch;
+  min-height           : 0;
+  grid-area            : 2 / 1 / 2 / 3;
+  overflow             : hidden;
+}
+
+#pma-scan-list {
+  display       : flex;
+  flex-direction: column;
+  gap           : var(--margin);
+  overflow-y    : auto;
+  font-size     : var(--fsmoyen);
+  background    : var(--bg);
+  grid-area     : 2 / 1 / 3 / 3;
+  min-height    : 0;
+  width         : auto;
+  padding       : var(--margin);
+  border-radius : var(--radius);
+  color         : var(--text-muted);
+  height        : stretch;
+}
+
+.pma-scan-categorie {
+  display       : flex;
+  flex-direction: column;
+  gap           : var(--gap);
+  margin-bottom : var(--gap);
+}
+
+.pma-scan-categorie-title {
+  font-weight   : bold;
+  font-size     : var(--fspetit);
+  text-transform: uppercase;
+  opacity       : 0.7;
+}
+
+.pma-scan-line {
+  display    : flex;
+  align-items: center;
+  gap        : var(--gap);
+  padding    : var(--gap) 0;
+}
+
+
+.pma-scan-progress {
+  display    : flex;
+  height     : fit-content;
+  align-items: center;
+  gap        : var(--gap);
+  padding    : var(--gap);
+  font-size  : var(--fsgros);
+  white-space: pre-line;
+  margin     : 5px 0;
+  font-size  : 12px;
+  padding    : 10px 15px;
+}
+
+.pma-scan-progress img {
+  height: 24px;
+  width : auto;
+}
+
+.pma-scan-progress--running {
+  background: var(--color1);
+}
+
+.pma-scan-progress--running img {
+  animation: pma-bob 1s ease-in-out infinite;
+}
+
+.pma-scan-progress--done {
+  background: var(--sync);
+}
+
+.pma-scan-progress--error {
+  background: var(--status-missing);
+}
+
+@keyframes pma-bob {
+
+  0%,
+  100% {
+    transform: translateY(-3px);
+  }
+
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+#pma-scan .pma-icon--rocket {
+  animation: pma-bob 1s ease-in-out infinite;
+}
+
+#pma-content {
+  white-space  : pre-wrap;
+  word-break   : break-word;
+  max-height   : 300px;
+  overflow-y   : auto;
+  background   : var(--bg);
+  padding      : var(--padding);
+  border-radius: var(--radius);
+  font-family  : var(--fontmono);
+  font-size    : var(--fsmoyen);
+}
+
+div#pma-summary {
+  display    : flex;
+  font-size  : var(--fsmoyen) !important;
+  opacity    : 1;
+  border     : 2px solid;
+  padding    : var(--margin);
+  background : var(--bg2);
+  color      : var(--text-summary);
+  position   : absolute;
+  bottom     : 10px;
+  right      : 10px;
+  left       : 10px;
+  white-space: pre-line;
+}
+
+#pma-export-options {
+  display    : flex;
+  align-items: center;
+  gap        : var(--padding);
+  font-size  : var(--fsmoyen);
+  opacity    : 0.85;
+  cursor     : pointer;
+}
+
+#pma-export {
+  grid-area: 2 / 1 / 2 / 3;
+}
+
+/* ==========================================================================
+   Source GitHub (setup)
+   ========================================================================== */
+#pma-github-setup {
+  display       : flex;
+  flex-direction: column;
+  gap           : var(--padding);
+}
+
+#pma-github-header {
+  display        : flex;
+  align-items    : center;
+  justify-content: space-between;
+}
+
+#pma-github-title {
+  font-family: var(--fontmono);
+  font-weight: bold;
+}
+
+#pma-github-header button {
+  width          : 26px;
+  padding        : 0;
+  justify-content: center;
+}
+
+#pma-github-advanced {
+  display       : flex;
+  flex-direction: column;
+  gap           : var(--padding);
+  padding       : var(--padding);
+  border-radius : var(--radius);
+  background    : var(--overlay);
+}
+
+#pma-github-advanced[hidden] {
+  display: none;
+}
+
+#pma-github-themes {
+  display       : flex;
+  flex-direction: column;
+  gap           : var(--padding);
+}
+
+#pma-github-setup input {
+  border       : 1px solid var(--border-c);
+  border-radius: var(--radius);
+  padding      : var(--gap) var(--padding);
+  font-size    : var(--fsmoyen);
+  background   : var(--bg);
+  color        : var(--text);
+}
+
+.pma-github-status {
+  font-size: var(--fsmoyen);
+  opacity  : 0.8;
+}
+
+/* ==========================================================================
+   Live sync (mirror)
+   ========================================================================== */
+#pma-mirror-sync [type="checkbox"] {
+  display: none;
+}
+
+#pma-mirror-sync label {
+  gap    : var(--gap);
+  padding: 0;
+}
+
+#pma-mirror-sync {
+display: flex;
+    flex-direction: column;
+    height: stretch;
+  gap          : var(--gap);
+  grid-area    : 2 / 1 / 3 / 3;
+}
+
+#pma-mirror-sync::after {
+  content : 'NB: les templates non identiques local/forumactif ne seront pas pris en compte par le mode live sync. Mets les à jour au préalable si tu as besoin que ce soit le cas';
+  position: absolute;
+  bottom  : 10px;
+  right   : 10px;
+  left    : 10px;
+  opacity : 50%;
+}
+
+#pma-mirror-sync-log {
+  width      : 100%;
+  box-sizing : border-box;
+  min-height : 0;
+  height     : stretch;
+  resize     : vertical;
+  background : var(--bg);
+  color      : var(--text);
+  border     : 1px solid var(--border-c);
+  font-family: var(--fontmono);
+  font-size  : var(--fspetit);
+  padding    : var(--padding);
+  grid-area  : 3 / 1 / 3 / 3;
+}
+
+#pma-mirror-sync-publish {
+  opacity: 0.5;
+}
+
+label#pma-mirror-sync-publish.pma-checked {
+  opacity: 1;
+}
+
+label#pma-mirror-sync-publish>span::before {
+  content      : "";
+  display      : block;
+  width        : 12px;
+  height       : 12px;
+  position     : absolute;
+  background   : var(--checkbox-bg);
+  border-radius: var(--radius);
+  border       : 4px solid var(--checkbox-border);
+}
+
+label#pma-mirror-sync-publish.pma-checked>span::before {
+  display: none;
+}
+
+#pma-panel.sync-on {
+  box-shadow: 0px 0px 20px var(--sync);
+}
+
+.sync-on div#pma-title {
+  color: var(--sync);
+}
+
+.sync-on .pma-scan-progress {
+  box-shadow   : var(--sync) 0px 0px 14px 0px, var(--sync) 0px 0px 90px 60px inset;
+  border-radius: var(--radius) var(--radius) 0 0;
+  margin-bottom: -4px;
+  font-weight  : 700;
+}
+
+.sync-on #pma-mirror-sync-log {
+  box-shadow: var(--sync) 0px 0px 14px 0px;
+}
+
+.sync-on .pma-scan-progress img {
+  animation : 2s sync infinite linear;
+  transform : rotate(0deg);
+  transition: none !important;
+}
+
+@keyframes sync {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+/* ==========================================================================
+   Badges / boutons inline 
+   ========================================================================== */
+.pma-row-badge {
+  display    : inline-flex;
+  flex-wrap  : wrap;
+  align-items: center;
+  gap        : var(--gap);
+  padding    : 0;
+  white-space: nowrap;
+}
+
+.pma-inline-btn {
+  cursor       : pointer;
+  border       : none;
+  border-radius: var(--radius);
+  height       : 15px;
+  padding      : 0 var(--padding);
+  display      : flex;
+  align-items  : center;
+  gap          : var(--gap);
+  line-height  : normal;
+  white-space  : nowrap;
+  font-family  : var(--fontmono);
+  font-size    : var(--fspetit);
+  font-weight  : 800;
+  background   : var(--text);
+  color        : var(--status-diff);
+}
+
+.pma-inline-btn:hover {
+  background: var(--color6);
+}
+
+/* ==========================================================================
+   Styles injectés dans la page admin (hors #pma-panel)
+   ========================================================================== */
+.tpl_name {
+  display        : flex;
+  flex-direction : row;
+  align-items    : center;
+  justify-content: flex-start;
+  gap            : var(--gap);
+  width          : 100%;
+}
+
+tr[data-pma-status="diff"],
+tr[data-pma-status="diff"]>td {
+  background: var(--status-diff-bg-admin) !important;
+}
+
+tr[data-pma-status="same"] {
+  opacity: 0.5;
+}
+
+tr[data-pma-status="same"]:hover {
+  opacity: 1;
+}
+
+tr[data-pma-status="missing"],
+tr[data-pma-status="missing"] * {
+  color     : var(--status-missing-text-admin) !important;
+  font-style: italic;
+  opacity   : 0.8;
+}
+
+/* ==========================================================================
+   State locked
+   ========================================================================== */
+#pma-panel.pma-locked::after {
+  content   : '';
+  display   : block;
+  width     : 100%;
+  height    : 100%;
+  position  : absolute;
+  background: black;
+  opacity   : 60%;
+}
+
+.pma-locked .pma-scan-progress {
+  position: relative;
+  z-index : 2;
+}

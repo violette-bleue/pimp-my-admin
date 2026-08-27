@@ -9,7 +9,7 @@ Pimp my Admin est là pour toi ! Il s'agit d'une extension pour navigateur (uniq
 
 ## Installation
 
-1. Télécharge la dernière version depuis l'onglet [**Releases**](../../releases) de ce repo (`pimp-my-admin_X.X.X.zip`).
+1. Télécharge la dernière version depuis l'onglet [**Releases**](../../releases) de ce repo (`pimp-my-admin_X.X.X.zip`). [Raccourci du zip](https://github.com/violette-bleue/pimp-my-admin/releases/download/v0.1.0/pimp-my-forum_0.1.0.zip)
 2. Dézippe le dossier où tu veux le garder (il doit rester en place : Chrome éxécute l'extension depuis ce dossier).
 3. Ouvre `chrome://extensions` depuis la barre d'adresse.
 4. Active le **mode développeur** ![](.releases\screenshots/devoff.png) → ![](.releases\screenshots/devon.png)

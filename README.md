@@ -12,7 +12,7 @@ Pimp my Admin est là pour toi ! Il s'agit d'une extension pour navigateur (uniq
 1. Télécharge la dernière version depuis l'onglet [**Releases**](../../releases) de ce repo (`pimp-my-admin_X.X.X.zip`).
 2. Dézippe le dossier où tu veux le garder (il doit rester en place : Chrome éxécute l'extension depuis ce dossier).
 3. Ouvre `chrome://extensions` depuis la barre d'adresse.
-4. Active le **mode développeur** ![](.releases\screenshots/devoff.png) → ![](.releases\screenshots/devon.png)
+4. Active le **mode développeur** ![](docs/screenshots/devoff.png) → ![](docs/screenshots/devon.png)
 5. Clique sur `Charger l'extension non empaquetée` → sélectionne le dossier où tu as dézippé l'extension.
 
 ### Alternative : via git (pour rester à jour plus facilement)
@@ -46,7 +46,7 @@ L'extension apparaît automatiquement sur les pages de gestion des templates (`A
 ### 📁 **Dossier local** 
 L'arborescence suit toujours la même logique : un sous-dossier par catégorie, un fichier `.html` par template :
 
-![](.releases\screenshots/tplname.png)
+![](docs/screenshots/tplname.png)
 
  ```
   mon-theme/
@@ -68,7 +68,7 @@ Tous les templates `en attente de publication` peuvent être mis à jour en un c
 
 ### 🔍 Scan de la totalité des templates
 
-L'onglet ![](.releases\screenshots/toutescate.png) analyse l'ensemble des catégories (~150 templates) en une fois, sans quitter la page, et permet ensuite de mettre à jour et/ou publier les templates via un bouton unique.
+L'onglet ![](docs/screenshots/toutescate.png) analyse l'ensemble des catégories (~150 templates) en une fois, sans quitter la page, et permet ensuite de mettre à jour et/ou publier les templates via un bouton unique.
 
 ### ⬇️ Export forumactif → dossier local
 

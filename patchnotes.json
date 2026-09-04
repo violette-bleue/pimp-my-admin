@@ -1,0 +1,21 @@
+[
+  {
+    "version": "0.1.1",
+    "date": "2026-09-03",
+    "notes": [
+      "Hub catégories/forums : métadonnées + gestion de masse",
+      "Notifications des mises à jour de l'extension",
+      "Amélioration de l'interface de l'extension",
+      "Synchronisation des codes javascript et des pages HTML avec un dossier local"
+    ]
+  },
+  {
+    "version": "0.1.0",
+    "date": "2026-09-02",
+    "notes": [
+      "Synchronisation des templates avec un dossier local",
+      "Export / Import des templates",
+      "Live sync des templates"
+    ]
+  }
+]

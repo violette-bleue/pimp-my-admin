@@ -113,7 +113,7 @@ div:has(>input[type="checkbox"]:checked) {
     </div>
   </div>
 
-  <span>lol ya qu'une option en fait</span>
+  <span>lol ya deux options en fait</span>
 
   <div id="pma-body">
     <div>
@@ -126,6 +126,19 @@ div:has(>input[type="checkbox"]:checked) {
       (ex. après un <code>git pull</code>) et
       recharge automatiquement l'extension à la prochaine navigation dans
       l'admin FA — cela évite de repasser par <code>chrome://extensions</code> pour mettre à jour l'extension.
+    </p>
+  </div>
+
+    <div>
+      <input type="checkbox" id="update-check" />
+    <label>
+      Vérifier les mises à jour
+    </label>
+    <p class="hint">
+      Compare la version installée à celle du repo <code>pimp-my-admin</code>
+      toutes les 6 h et affiche un bandeau dans le panneau quand une nouvelle
+      version est dispo (il suffit alors d'un <code>git pull</code>).
+      <button type="button" id="check-now">Vérifier maintenant</button>
     </p>
   </div>
 

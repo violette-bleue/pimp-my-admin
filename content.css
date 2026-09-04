@@ -66,7 +66,7 @@
    Base / reset
    ========================================================================== */
 body:has(#pma-panel) {
-  margin-right: var(--pagemargin);
+  margin-right: var(--panelw);
 }
 
 #pma-panel * {
@@ -100,27 +100,32 @@ body:has(#pma-panel) {
   display    : inline-flex;
   align-items: center;
   gap        : var(--gap);
+  font-weight: 100;
 }
 
 /* ==========================================================================
    Panel shell
    ========================================================================== */
 #pma-panel {
-  position          : fixed;
-  height            : 100vh;
-  top               : 0;
-  right             : 0;
-  z-index           : var(--zpanel);
-  width             : var(--panelw);
-  background        : var(--bg);
-  border-radius     : var(--radius);
-  box-shadow        : 0 4px 16px var(--overlay);
-  font-family       : var(--fontbody);
-  font-size         : var(--fsmoyen);
-  transition        : var(--transition);
-  display           : grid;
-  grid-template-rows: auto 1fr;
-  min-height        : 0;
+  position      : fixed;
+  height        : 100vh;
+  top           : 0;
+  right         : 0;
+  z-index       : var(--zpanel);
+  width         : var(--panelw);
+  background    : var(--bg);
+  border-radius : var(--radius);
+  box-shadow    : 0 4px 16px var(--overlay);
+  font-family   : var(--fontbody);
+  font-size     : var(--fsmoyen);
+  transition    : var(--transition);
+  display       : flex;
+  flex-direction: column;
+  min-height    : 0;
+}
+
+#pma-panel>* {
+  height: fit-content;
 }
 
 #pma-body {
@@ -137,12 +142,21 @@ body:has(#pma-panel) {
    Header
    ========================================================================== */
 #pma-header {
-  display      : flex;
+  display      : grid;
+  grid-template: auto / auto 1fr 1fr;
   align-items  : center;
-  gap          : var(--padding);
+  gap          : var(--gap) var(--padding);
   padding      : var(--padding) var(--margin);
   background   : var(--bg);
   border-radius: var(--radius) var(--radius) 0 0;
+}
+
+div#pma-header-text {
+  grid-area: 1 / 2 / 1 / 3;
+}
+
+#pma-update-check {
+  margin-left: auto;
 }
 
 #pma-header-source {
@@ -153,6 +167,13 @@ body:has(#pma-panel) {
   opacity       : 0.5;
   flex-direction: column;
   color         : var(--text-muted);
+  grid-area     : 2 / 3 / 2 / 3;
+}
+
+#pma-header>button:last-of-type {
+  grid-area : 2 / -1 / 2 / 1;
+  background: none;
+  gap       : var(--gap);
 }
 
 #pma-logo {
@@ -168,6 +189,18 @@ body:has(#pma-panel) {
   background     : var(--gradient);
   background-clip: text;
   color          : transparent;
+  display        : flex;
+  align-items    : center;
+  gap            : var(--gap);
+  white-space    : nowrap;
+
+}
+
+#pma-version {
+  font-size              : var(--fspetit);
+  font-weight            : normal;
+  -webkit-background-clip: initial;
+  background-clip        : initial;
 }
 
 #pma-vitrine-link {
@@ -184,20 +217,100 @@ body:has(#pma-panel) {
 }
 
 /* ==========================================================================
+   Bouton "vérifier les maj" (header)
+   ========================================================================== */
+#pma-update-check {
+  margin-left: auto;
+  padding    : 0 var(--gap);
+  background : transparent;
+  color      : var(--text-muted);
+  font-size  : var(--fsgros);
+  line-height: 1;
+}
+
+#pma-update-check:hover {
+  color: var(--color5);
+}
+
+#pma-update-check:disabled {
+  opacity: 0.4;
+}
+
+/* ==========================================================================
+   Bandeau mise à jour
+   ========================================================================== */
+#pma-update-banner {
+  display       : flex;
+  flex-direction: row;
+  align-items   : center;
+  flex-wrap     : wrap;
+  gap           : var(--gap);
+  padding       : var(--padding) var(--margin);
+  background    : #362f4b;
+  border-left   : 3px solid var(--color5);
+  color         : var(--text);
+  order         : 3;
+  margin-top    : auto;
+}
+
+#pma-update-banner .pma-update-head {
+  display    : flex;
+  align-items: center;
+  gap        : var(--gap);
+  font-family: var(--fontmono);
+  font-weight: 700;
+  color      : var(--color5);
+}
+
+#pma-update-banner .pma-update-hint {
+  font-family: var(--fontmono);
+  font-size  : var(--fspetit);
+  color      : var(--text-muted);
+}
+
+.pma-update-hint>a {
+  color: var(--color2) !important;
+}
+
+.pma-update-hint>* {
+  color: var(--color3);
+}
+
+#pma-update-banner details {
+  font-size: var(--fspetit);
+}
+
+#pma-update-banner summary {
+  cursor     : pointer;
+  font-weight: 700;
+}
+
+#pma-update-banner .pma-update-entry {
+  margin-top: var(--gap);
+}
+
+#pma-update-banner .pma-update-entry ul {
+  margin      : var(--gap) 0 0;
+  padding-left: var(--margin);
+}
+
+#pma-update-banner .pma-update-dismiss {
+  align-self : flex-start;
+  background : var(--border-c);
+  font-size  : 10px;
+  margin     : 0;
+  padding    : 2px 6px;
+  font-weight: 100;
+  opacity    : 60%;
+  order      : -1;
+}
+
+/* ==========================================================================
    Boutons, inputs & labels (génériques)
    ========================================================================== */
 #pma-panel button,
 #pma-panel input {
   font-family: var(--fontbody);
-}
-
-#pma-panel button {
-  cursor     : pointer;
-  display    : flex;
-  margin     : 0;
-  border     : none;
-  line-height: normal;
-  color      : var(--text);
 }
 
 #pma-panel button,
@@ -210,24 +323,31 @@ body:has(#pma-panel) {
   align-items  : center;
   white-space  : pre-line;
   border-radius: var(--radius);
+  height       : fit-content;
+  line-height  : normal;
 }
 
-#pma-panel .pma-tab-panel button {
+#pma-panel .pma-tab-panel button,
+.pma-file-input {
   border-radius  : 0;
   background     : var(--gradient3);
   box-shadow     : 0 0 5px var(--color7);
-  height         : 50px;
-  font-size      : var(--fsmoyen);
   font-weight    : 100;
   background-size: 100%;
   transition     : var(--transition);
+  padding        : var(--gap) calc(var(--gap) * 2) var(--gap) var(--gap);
+  color          : var(--text);
+  text-transform : uppercase;
+  margin         : 0;
 }
 
-#pma-panel .pma-tab-panel button:hover {
+#pma-panel .pma-tab-panel button:hover,
+.pma-file-input:hover {
   background-size: 140%;
 }
 
-#pma-panel .pma-tab-panel button:hover img {
+#pma-panel .pma-tab-panel button:hover img,
+.pma-file-input:hover img {
   transform: translate(0px, -5px);
 }
 
@@ -332,6 +452,13 @@ body:has(#pma-panel) {
   margin     : 0;
   padding    : var(--margin);
   font-family: var(--fontmono);
+  height     : 40px;
+}
+
+.pma-actions-even {
+  display      : grid;
+  grid-template: auto / 1fr 1fr;
+  gap          : calc(var(--gap) * 5) var(--gap);
 }
 
 #pma-panel button.pma-tab-btn.pma-tab-btn--active {
@@ -412,18 +539,15 @@ body:has(#pma-panel) {
   padding    : var(--gap) 0;
 }
 
-
-.pma-scan-progress {
-  display    : flex;
-  height     : fit-content;
-  align-items: center;
-  gap        : var(--gap);
-  padding    : var(--gap);
-  font-size  : var(--fsgros);
-  white-space: pre-line;
-  margin     : 5px 0;
-  font-size  : 12px;
-  padding    : 10px 15px;
+#pma-hub-content .pma-scan-progress {
+  position       : absolute;
+  width          : fit-content;
+  height         : fit-content;
+  pointer-events : none;
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+  z-index        : 10;
 }
 
 .pma-scan-progress img {
@@ -445,6 +569,16 @@ body:has(#pma-panel) {
 
 .pma-scan-progress--error {
   background: var(--status-missing);
+}
+
+#pma-hub-content:has([class*="pma-scan-progress--"]) .pma-hub-table {
+  opacity: 50%;
+}
+
+#pma-hub-content>.pma-scan-progress {
+  top      : 50%;
+  left     : 50%;
+  transform: translate(-50%, -50%);
 }
 
 @keyframes pma-bob {
@@ -475,7 +609,7 @@ body:has(#pma-panel) {
   font-size    : var(--fsmoyen);
 }
 
-div#pma-summary {
+#pma-summary {
   display    : flex;
   font-size  : var(--fsmoyen) !important;
   opacity    : 1;
@@ -483,11 +617,16 @@ div#pma-summary {
   padding    : var(--margin);
   background : var(--bg2);
   color      : var(--text-summary);
-  position   : absolute;
-  bottom     : 10px;
-  right      : 10px;
-  left       : 10px;
   white-space: pre-line;
+}
+
+#pma-wipe-option {
+  display    : flex;
+  align-items: center;
+  gap        : var(--gap);
+  font-size  : var(--fsmoyen);
+  color      : var(--status-missing);
+  cursor     : pointer;
 }
 
 #pma-export-options {
@@ -575,11 +714,11 @@ div#pma-summary {
 }
 
 #pma-mirror-sync {
-display: flex;
-    flex-direction: column;
-    height: stretch;
-  gap          : var(--gap);
-  grid-area    : 2 / 1 / 3 / 3;
+  display       : flex;
+  flex-direction: column;
+  height        : stretch;
+  gap           : var(--gap);
+  grid-area     : 2 / 1 / 3 / 3;
 }
 
 #pma-mirror-sync::after {
@@ -715,12 +854,12 @@ tr[data-pma-status="diff"]>td {
   background: var(--status-diff-bg-admin) !important;
 }
 
-tr[data-pma-status="same"] {
-  opacity: 0.5;
+tr[data-pma-status="same"]>* {
+  background: none !important;
 }
 
 tr[data-pma-status="same"]:hover {
-  opacity: 1;
+  background: var(--bg2) !important;
 }
 
 tr[data-pma-status="missing"],
@@ -747,3 +886,448 @@ tr[data-pma-status="missing"] * {
   position: relative;
   z-index : 2;
 }
+
+
+/* ==========================================================================
+   Forums hub
+   ========================================================================== */
+.pma-hub-table a {
+  color: var(--bg) !important;
+}
+
+#pma-hub-content {
+  color          : var(--text);
+  padding        : var(--margin);
+  border-radius  : var(--radius);
+  font-family    : var(--fontbody);
+  font-size      : var(--fsmoyen);
+  max-width      : 100%;
+  width          : 100%;
+  display        : flex;
+  gap            : var(--gap);
+  position       : relative;
+  justify-content: flex-start;
+  align-items    : center;
+  justify-content: center;
+}
+
+#pma-hub-content[hidden],
+#pma-hub-content [hidden] {
+  display: none !important;
+}
+
+.pma-hub-table {
+  width          : fit-content;
+  border-collapse: collapse;
+  font-size      : var(--fsmoyen);
+  white-space    : nowrap;
+  font-family    : var(--fontbody);
+  background     : var(--color3);
+}
+
+.pma-hub-table * {
+  font-family: var(--fontbody);
+}
+
+.pma-hub-table th,
+.pma-hub-table td {
+  text-align   : left;
+  border-bottom: 1px solid var(--border-c);
+  background   : none;
+  height       : 30px;
+  padding      : unset;
+}
+
+.pma-hub-name {
+  padding-right: 30px !important;
+  max-width    : 200px;
+  overflow     : hidden;
+  text-overflow: ellipsis;
+}
+
+.pma-hub-table thead {
+  background: var(--gradient);
+  position  : sticky;
+  top       : 0;
+  z-index   : 2;
+}
+
+.pma-hub-table thead th {
+  font-family: var(--fontbody);
+  font-weight: 100;
+  padding    : 0 10px;
+}
+
+.pma-hub-row--category {
+  background: var(--overlay);
+}
+
+.pma-hub-row--category td {
+  font-weight   : bold;
+  text-transform: uppercase;
+}
+
+.pma-hub-row td>input {
+  width: 40px;
+}
+
+.pma-hub-name a {
+  color          : var(--bg);
+  font-family    : var(--fontbody);
+  text-decoration: none;
+}
+
+.pma-hub-name a:hover {
+  color: var(--color2);
+}
+
+.pma-hub-category-label {
+  opacity   : 0.6;
+  font-style: italic;
+  background: var(--overlay);
+}
+
+.pma-hub-detail-row[hidden] {
+  display: none;
+}
+
+.pma-hub-detail-row td {
+  background: var(--overlay);
+  padding   : var(--margin);
+  color     : var(--checkbox-bg);
+}
+
+/* Connecteurs arbre */
+.pma-hub-row--forum .pma-hub-name::before {
+  content: '├─ ';
+}
+
+.pma-hub-row--forum[data-last] .pma-hub-name::before {
+  content: '└─ ';
+}
+
+.pma-hub-row[data-sub="2"] .pma-hub-name {
+  opacity: 0.85;
+}
+
+.pma-hub-row[data-sub="3"] .pma-hub-name {
+  opacity: 0.7;
+}
+
+.pma-hub-row:is([data-sub="4"], [data-sub="5"]) .pma-hub-name {
+  opacity: 0.55;
+}
+
+.pma-perm-badge {
+  border       : none;
+  border-radius: var(--radius);
+  padding      : 2px var(--gap);
+  font-size    : var(--fspetit);
+  cursor       : pointer;
+  color        : var(--text-accent);
+  font-family  : var(--fontmono);
+  font-weight  : 100;
+  font-size    : 0;
+  margin       : 0;
+  height       : 100%;
+  width        : 100%;
+}
+
+.pma-perm-badge--guest {
+  background: var(--sync);
+}
+
+.pma-perm-badge--member {
+  background: var(--color5);
+}
+
+.pma-perm-badge--admin {
+  background: var(--status-missing);
+  color     : var(--text);
+}
+
+.pma-perm-badge--admin::before {
+  content  : 'A';
+  font-size: 10px;
+}
+
+.pma-perm-badge--guest::before {
+  content  : 'I';
+  font-size: 10px;
+}
+
+.pma-perm-badge--member::before {
+  content  : 'M';
+  font-size: 10px;
+}
+
+.pma-hub-toolbar {
+  display      : flex;
+  flex-wrap    : wrap;
+  gap          : var(--gap);
+  align-items  : flex-start;
+  align-content: flex-start;
+  height       : fit-content;
+  position     : sticky;
+  top          : 0;
+  width        : 100px;
+}
+
+.pma-hub-toolbar button,
+.pma-hub-toolbar a {
+  cursor         : pointer;
+  gap            : var(--gap);
+  display        : flex;
+  background     : var(--gradient2);
+  box-shadow     : 0 0 5px #00000052;
+  font-family    : var(--fontmono);
+  color          : var(--text);
+  border-radius  : var(--radius);
+  padding        : var(--gap) var(--padding);
+  font-size      : var(--fspetit);
+  text-decoration: none;
+  align-items    : center;
+  width          : 100%;
+  margin         : 0;
+}
+
+.pma-hub-toolbar>button:nth-of-type(2) {
+  margin-bottom: 20px;
+}
+
+.pma-hub-toolbar>button:nth-of-type(4) {
+  background: var(--sync);
+  margin-top: 20px;
+}
+
+.pma-hub-toolbar>button:nth-of-type(5) {
+  background: var(--status-missing);
+}
+
+.pma-hub-toolbar span {
+  display      : flex;
+  height       : auto;
+  order        : -1;
+  margin-bottom: 20px;
+  width        : 100%;
+}
+
+.pma-hub-toolbar a {
+  display    : flex;
+  align-items: center;
+  color      : var(--bg);
+  background : var(--bg2);
+}
+
+.pma-hub-toolbar button:hover,
+.pma-hub-toolbar a:hover {
+  background: var(--color7);
+}
+
+.pma-hub-row--add td {
+  opacity: 0.6;
+}
+
+.pma-hub-create-form {
+  display    : inline-flex;
+  gap        : var(--gap);
+  align-items: center;
+}
+
+.pma-hub-create-form input {
+  color        : var(--text);
+  border       : 1px solid var(--border-c);
+  border-radius: var(--radius);
+  font-size    : var(--fspetit);
+  width        : stretch;
+  background   : var(--color3);
+  padding      : var(--padding);
+}
+
+.pma-hub-create-form button {
+  cursor       : pointer;
+  background   : var(--overlay);
+  color        : var(--text);
+  border       : 1px solid var(--border-c);
+  border-radius: var(--radius);
+  padding      : 2px var(--gap);
+  font-size    : var(--fspetit);
+}
+
+.pma-hub-row.pma-hub-row--category * {
+  font-family: var(--fontmono);
+}
+
+.pma-hub-row--add a {
+  opacity   : 20%;
+  transition: all 200ms ease;
+}
+
+.pma-hub-row.pma-hub-row--add {
+  background: #ffffff42;
+}
+
+.pma-hub-row--add:hover a {
+  opacity: 1;
+}
+
+.pma-hub-row[draggable="true"] {
+  cursor: grab;
+}
+
+tr.pma-drop-before {
+  box-shadow: inset 0 3px 0 0 var(--sync);
+}
+
+tr.pma-drop-after {
+  box-shadow: inset 0 -3px 0 0 var(--sync);
+}
+
+tr.pma-drop-nest {
+  box-shadow: inset 0 0 0 2px var(--color5);
+}
+
+.pma-hub-essential-only .pma-perm-col:not(.pma-perm-col--essential) {
+  display: none;
+}
+
+.pma-hub-locked {
+  position      : relative;
+  pointer-events: none;
+  opacity       : 0.6;
+}
+
+#auth_forum_list_table tr:has(td input:checked),
+#auth_forum_list_table tr:has(td input:checked) td {
+  background: var(--bg2);
+}
+
+.pma-forum-form {
+  display      : grid;
+  grid-template: repeat(5, auto) / 1fr 1fr 1fr;
+  align-items  : start;
+  gap          : calc(var(--gap)*2);
+}
+
+.pma-forum-form-row {
+  font-size     : var(--fsmoyen);
+  display       : flex;
+  flex-direction: column;
+  padding       : 0;
+  width         : stretch;
+}
+
+.pma-forum-form-row>span {
+  width      : 130px;
+  font-weight: bold;
+}
+
+.pma-forum-form-row:has(input[name="name"]) {
+  width    : 100%;
+  grid-area: 1 / 1 / 1 / 4;
+}
+
+.pma-forum-form-row:has([name="desc"]) {
+  width      : 100%;
+  min-height : 100px;
+  align-items: flex-start;
+  grid-area  : 4 / 2 / 4 / 4;
+}
+
+.pma-forum-form-row:has([name="image"]) {
+  grid-area: 4 / 1 / 4 / 1;
+}
+
+[name="desc"] {
+  min-height: 100px;
+}
+
+.pma-forum-form-row input {
+  width: stretch;
+}
+
+.pma-forum-image-preview {
+  max-width : 100%;
+  max-height: 60px;
+  margin-top: var(--gap);
+  object-fit: contain;
+  align-self: flex-start;
+  border    : 1px solid var(--border-c);
+}
+
+.pma-forum-form>button {
+  grid-area  : 5 / 3 / 5 / 3;
+  background : var(--sync);
+  font-family: var(--fontmono);
+  height     : 27px;
+  width      : fit-content;
+  margin-left: auto;
+}
+
+.pma-forum-form-row select,
+.pma-forum-form-row input,
+.pma-forum-form-row textarea {
+  background   : var(--overlay);
+  color        : var(--text);
+  border       : 1px solid var(--border-c);
+  border-radius: var(--radius);
+  padding      : var(--gap);
+}
+
+.pma-perm-grid {
+  width          : 100%;
+  border-collapse: collapse;
+  font-size      : var(--fspetit);
+}
+
+.pma-perm-grid th,
+.pma-perm-grid td {
+  padding      : var(--gap);
+  text-align   : left;
+  border-bottom: 1px solid var(--border-c);
+}
+
+#pma-bulk-perms {
+  display       : flex;
+  flex-direction: column;
+  gap           : var(--gap);
+  padding-bottom: var(--margin);
+  border-bottom : 1px solid var(--border-c);
+}
+
+.pma-file-input {
+  cursor: pointer;
+}
+
+.pma-file-input input[type="file"] {
+  display: none;
+}
+
+/* ==========================================================================
+   JS-HTML
+   ========================================================================== */
+#pma-create-missing {
+  display       : flex;
+  gap           : var(--gap);
+  flex-direction: column;
+}
+
+#pma-create-missing-list {
+  list-style    : none;
+  margin        : 0;
+  display       : flex;
+  flex-direction: column;
+  align-items   : flex-start;
+  gap           : var(--gap);
+}
+
+#pma-create-missing-list>li {
+  display       : flex;
+  flex-direction: row-reverse;
+  align-items   : center;
+  gap           : var(--gap);
+}
+
+/* ==========================================================================
+   
+   ========================================================================== */

@@ -3,6 +3,8 @@ import { setIconContent, setProgress, setProgressState, setPanelBusy } from "../
 import { sleep } from "../shared/util.js";
 import { fetchLiveContent } from "./network.js";
 
+const MODULE_KEY = "templates";
+
 export function mountExportButton(container, source, { onlyCategory } = {}) {
   const exportOptions = document.createElement("label");
   exportOptions.id = "pma-export-options";
@@ -53,7 +55,8 @@ async function resolveExportDestination(source, progress) {
 
 async function destFileExists(destHandle, categorySlug, tplName) {
   try {
-    const catHandle = await destHandle.getDirectoryHandle(categorySlug);
+    const moduleHandle = await destHandle.getDirectoryHandle(MODULE_KEY);
+    const catHandle = await moduleHandle.getDirectoryHandle(categorySlug);
     await catHandle.getFileHandle(tplName + ".html");
     return true;
   } catch (err) {
@@ -82,19 +85,19 @@ export async function runExport(container, source, triggerBtn, includeDefaults, 
       (cat) => !onlyCategory || cat.label === onlyCategory
     );
     if (!categories.length) {
-      progress.textContent = "Aucune catégorie trouvée sur cette page ??"; // fallback au cas où
+      progress.textContent = "Aucune catégorie trouvée sur cette page ??"; // fallback
       setProgressState(progress, "error");
       return;
     }
 
     const destHandle = await resolveExportDestination(source, progress);
     if (!destHandle) {
-      progress.textContent = "Export annulé (aucun dossier de destination)"; // fallback au cas où
+      progress.textContent = "Export annulé (aucun dossier de destination)"; // fallback
       setProgressState(progress, "error");
       return;
     }
 
-    const collected = []; // { categorySlug, tplName, content }
+    const collected = [];
 
     for (let i = 0; i < categories.length; i++) {
       const cat = categories[i];
@@ -134,7 +137,8 @@ export async function runExport(container, source, triggerBtn, includeDefaults, 
           continue;
         }
 
-        const catHandle = await destHandle.getDirectoryHandle(item.categorySlug, { create: true });
+        const moduleHandle = await destHandle.getDirectoryHandle(MODULE_KEY, { create: true });
+        const catHandle = await moduleHandle.getDirectoryHandle(item.categorySlug, { create: true });
         const fileHandle = await catHandle.getFileHandle(item.tplName + ".html", { create: true });
         const writable = await fileHandle.createWritable();
         await writable.write(item.content);

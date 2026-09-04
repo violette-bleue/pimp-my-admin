@@ -1,8 +1,12 @@
 import { idbGet, idbSet } from "../shared/idb.js";
 import { buildSourcePickers, buildReauthorizeButton } from "../shared/panel.js";
 import { extractCategoryLinks, slugifyCategory } from "../shared/categories.js";
+import { readOriginalName, stripNameMarker } from "../shared/safe-name.js";
 
 export const DEFAULT_GITHUB_SOURCE = { owner: "violette-bleue", repo: "pimp-my-forum-library" };
+
+// Structure ≥0.1.1
+const RESERVED_ROOT_FOLDERS = new Set(["templates", "html", "js", "forums"]);
 
 export function forgetSource() {
   return idbSet("source", null);
@@ -33,57 +37,131 @@ export async function loadSource(container) {
   });
 }
 
-export async function buildFileIndex(source) {
-  return source.type === "local" ? buildLocalIndex(source.handle) : buildGithubIndex(source);
+export async function buildFileIndex(source, moduleKey, { withCategories = false } = {}) {
+  return source.type === "local"
+    ? buildLocalIndex(source.handle, moduleKey, withCategories)
+    : buildGithubIndex(source, moduleKey, withCategories);
 }
 
-async function buildLocalIndex(dirHandle) {
+async function buildLocalIndex(rootHandle, moduleKey, withCategories) {
   const index = new Map();
   const byName = new Map();
+  const extension = moduleKey === "js" ? ".js" : ".html";
 
   function record(category, base, fileLike) {
-    index.set(category + "/" + base, fileLike);
+    if (category) index.set(category + "/" + base, fileLike);
     if (!byName.has(base)) byName.set(base, []);
     byName.get(base).push({ category, file: fileLike });
   }
 
-  async function walk(handle, category) {
-    try {
-      for await (const [name, entry] of handle.entries()) {
-        if (entry.kind === "directory") {
-          await walk(entry, category || name);
-        } else if (name.endsWith(".html") && category) {
-          record(category, name.slice(0, -5), {
-            text: () => entry.getFile().then((f) => f.text()),
-            mtime: () => entry.getFile().then((f) => f.lastModified),
-          });
+  function toFileLike(entry, hasMarker) {
+    return {
+      text: () =>
+        entry
+          .getFile()
+          .then((f) => f.text())
+          .then((t) => (hasMarker ? stripNameMarker(t) : t)),
+      mtime: () => entry.getFile().then((f) => f.lastModified),
+    };
+  }
+
+  let moduleHandle;
+  let legacyRoot = false;
+  try {
+    moduleHandle = await rootHandle.getDirectoryHandle(moduleKey);
+  } catch (err) {
+    if (!withCategories) {
+      index.byName = byName;
+      return index; // dossier absent
+    }
+    moduleHandle = rootHandle; // repli : anciennes catégories à la racine
+    legacyRoot = true;
+  }
+
+  try {
+    if (withCategories) {
+      async function walk(handle, category) {
+        for await (const [name, entry] of handle.entries()) {
+          if (legacyRoot && category === null && RESERVED_ROOT_FOLDERS.has(name)) continue;
+          if (entry.kind === "directory") await walk(entry, category || name);
+          else if (name.endsWith(extension) && category) {
+            record(category, name.slice(0, -extension.length), toFileLike(entry, false));
+          }
         }
       }
-    } catch (err) {
-      console.error("Echec de lecture du dossier ):", handle.name, err);
+      await walk(moduleHandle, null);
+    } else {
+      for await (const [name, entry] of moduleHandle.entries()) {
+        if (entry.kind === "file" && name.endsWith(extension)) {
+          let base = name.slice(0, -extension.length);
+          let hasMarker = false;
+          try {
+            const head = await (await entry.getFile()).slice(0, 512).text();
+            const original = readOriginalName(head);
+            if (original) {
+              base = original;
+              hasMarker = true;
+            }
+          } catch (err) {
+            // intentionnel
+          }
+          record(null, base, toFileLike(entry, hasMarker));
+        }
+      }
     }
+  } catch (err) {
+    console.error("Echec de lecture du dossier ):", moduleKey, err);
   }
-  await walk(dirHandle, null);
+
   index.byName = byName;
   return index;
 }
 
-async function buildGithubIndex(source) {
+async function buildGithubIndex(source, moduleKey, withCategories) {
   const { owner, repo, branch, theme } = source;
   const tree = await fetchGithubTree(owner, repo, branch);
-  const prefix = theme + "/";
+  const prefix = `${theme}/${moduleKey}/`;
+  const extension = moduleKey === "js" ? ".js" : ".html";
   const index = new Map();
   const byName = new Map();
 
   for (const item of tree) {
-    if (item.type !== "blob" || !item.path.startsWith(prefix) || !item.path.endsWith(".html")) continue;
-    const rest = item.path.slice(prefix.length);
-    const slashIdx = rest.indexOf("/");
-    const category = rest.slice(0, slashIdx);
-    const basename = rest.slice(slashIdx + 1, -5);
+    if (item.type !== "blob" || !item.path.startsWith(prefix) || !item.path.endsWith(extension)) continue;
+    const rest = item.path.slice(prefix.length, -extension.length);
+
+    let category = null;
+    let basename = rest;
+    if (withCategories) {
+      const slashIdx = rest.indexOf("/");
+      if (slashIdx === -1) continue;
+      category = rest.slice(0, slashIdx);
+      basename = rest.slice(slashIdx + 1);
+    }
+
     const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${item.path}`;
-    const fileLike = { text: () => fetch(rawUrl).then((r) => r.text()), mtime: () => null };
-    index.set(category + "/" + basename, fileLike);
+
+    let hasMarker = false;
+    if (!withCategories) {
+      try {
+        const head = await fetch(rawUrl, { headers: { Range: "bytes=0-511" } }).then((r) => r.text());
+        const original = readOriginalName(head);
+        if (original) {
+          basename = original;
+          hasMarker = true;
+        }
+      } catch (err) {
+        // intentionnel
+      }
+    }
+
+    const fileLike = {
+      text: () =>
+        fetch(rawUrl)
+          .then((r) => r.text())
+          .then((t) => (hasMarker ? stripNameMarker(t) : t)),
+      mtime: () => null,
+    };
+    if (category) index.set(category + "/" + basename, fileLike);
     if (!byName.has(basename)) byName.set(basename, []);
     byName.get(basename).push({ category, file: fileLike });
   }

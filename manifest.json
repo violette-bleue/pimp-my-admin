@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Pimp my Admin",
-  "version": "0.1.0",
+  "name": "Pimp my Admin DEV",
+  "version": "0.0.8",
   "description": "Extension quality of life pour les actions laborieuses et répétitives dans le panneau d'administration de son forumactif",
   "author": "misenasha",
   "homepage_url": "https://pimpmyforum.forumactif.com/",
@@ -20,6 +20,15 @@
     "service_worker": "background.js"
   },
   "options_page": "options.html",
+  "action": {
+    "default_title": "Pimp my Admin",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
   "content_scripts": [
     {
       "matches": ["*://*.forumactif.com/admin/*"],
@@ -36,16 +45,35 @@
         "modules/shared/categories.js",
         "modules/shared/panel.js",
         "modules/shared/tabs.js",
+        "modules/shared/scan-cache.js",
+        "modules/shared/sync-list.js",
+        "modules/shared/mirror-sync.js",
+        "modules/shared/export-list.js",
+        "modules/shared/create-missing.js",
+        "modules/shared/safe-name.js",
+        "modules/shared/csv.js",
         "modules/source/source.js",
         "modules/templates-sync/network.js",
-        "modules/templates-sync/scan-cache.js",
         "modules/templates-sync/edit-page.js",
         "modules/templates-sync/export.js",
         "modules/templates-sync/inventory.js",
         "modules/templates-sync/full-scan.js",
-        "modules/templates-sync/category-tab.js",
         "modules/templates-sync/list-page.js",
-        "modules/templates-sync/mirror-sync.js"
+        "modules/js-codes/rows.js",
+        "modules/js-codes/network.js",
+        "modules/js-codes/list.js",
+        "modules/html-pages/rows.js",
+        "modules/html-pages/network.js",
+        "modules/html-pages/list.js",
+        "modules/forums-hub/schema.js",
+        "modules/forums-hub/csv-map.js",
+        "modules/forums-hub/rows.js",
+        "modules/forums-hub/network.js",
+        "modules/forums-hub/metadata-panel.js",
+        "modules/forums-hub/permissions-panel.js",
+        "modules/forums-hub/export-import.js",
+        "modules/forums-hub/inline-hub.js",
+        "modules/forums-hub/hub.js"
       ],
       "matches": ["*://*.forumactif.com/*"]
     }

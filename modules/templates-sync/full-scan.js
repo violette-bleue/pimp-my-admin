@@ -1,9 +1,11 @@
 import { extractCategoryLinks } from "../shared/categories.js";
 import { setIconContent, setProgress, setProgressState } from "../shared/dom.js";
 import { sleep } from "../shared/util.js";
-import { saveScanCache, setCachedStatus } from "./scan-cache.js";
+import { saveScanCache, setCachedStatus } from "../shared/scan-cache.js";
 import { pushContent, publishTemplate, derivePendingAfterUpdate } from "./network.js";
 import { buildInventory } from "./inventory.js";
+
+const MODULE_KEY = "templates";
 
 function categoriesCount(entries) {
   return new Set(entries.map((e) => e.category)).size;
@@ -151,7 +153,7 @@ function renderScanResults(section, entries, source, scanCache) {
       derivePendingAfterUpdate(entry, savedHtml, entry.editUrl);
       if (entry.mtime != null) {
         setCachedStatus(scanCache, entry.tplName, entry.mtime, "same");
-        saveScanCache(source, scanCache);
+        saveScanCache(source, MODULE_KEY, scanCache);
       }
       if (entry.lineEl) setIconContent(entry.lineEl, "icons8-check-32", `${entry.category} / ${entry.tplName} — mis à jour`);
       return true;

@@ -7,17 +7,137 @@ export function buildPanel() {
     <div id="pma-header">
       <img src="https://violette-bleue.github.io/pimp-my-forum/img/logo.png" alt="" id="pma-logo" />
       <div id="pma-header-text">
-        <div id="pma-title">Pimp my Admin</div>
+        <div id="pma-title">Pimp my Admin <span id="pma-version"></span></div>
         <a href="https://pimpmyforum.forumactif.com/" target="_blank" id="pma-vitrine-link">
           <img src="https://violette-bleue.github.io/pimp-my-forum/img/icons/icons8-fire-32.png" alt="" class="pma-icon" />
           Pimp My Forum
         </a>
       </div>
+      <button type="button" id="pma-update-check" title="Vérifier les mises à jour">⟳</button>
       <div id="pma-header-source" hidden></div>
+      <button type="button" id="pma-native-toggle"></button>
     </div>
     <div id="pma-body"></div>
   `;
+  el.querySelector("#pma-version").textContent = "v" + chrome.runtime.getManifest().version;
+  wireUpdateCheck(el);
+  mountUpdateBanner(el);
+  wireNativeToggle(el);
   return el;
+}
+
+function wireNativeToggle(panel) {
+  const btn = panel.querySelector("#pma-native-toggle");
+  const body = panel.querySelector("#pma-body");
+  const listeners = new Set();
+  let active = true;
+
+  function render() {
+    setIconContent(btn, active ? "icons8-on-32" : "icons8-toggle-off-32", active ? "Extension activée" : "FA normal");
+    body.hidden = !active;
+    for (const fn of listeners) fn(active);
+  }
+
+  btn.addEventListener("click", () => {
+    active = !active;
+    render();
+  });
+
+  panel.pmaNativeToggle = {
+    onToggle(fn) {
+      listeners.add(fn);
+      fn(active);
+    },
+  };
+
+  render();
+}
+
+function wireUpdateCheck(panel) {
+  const btn = panel.querySelector("#pma-update-check");
+  btn.addEventListener("click", () => {
+    btn.disabled = true;
+    chrome.runtime.sendMessage({ type: "pma-check-update" }, () => {
+      btn.disabled = false;
+    });
+  });
+}
+
+function mountUpdateBanner(panel) {
+  function render(info) {
+    if (panel.querySelector("#pma-update-banner")) return;
+
+    const bar = document.createElement("div");
+    bar.id = "pma-update-banner";
+
+    const head = document.createElement("div");
+    head.className = "pma-update-head";
+    setIconContent(head, "icons8-rocket-32", `Mise à jour dispo — v${info.version}`);
+    
+    const releasesLink = document.createElement("a");
+    releasesLink.href = info.releasesUrl;
+    releasesLink.target = "_blank";
+    releasesLink.textContent = "Télécharge la dernière version";
+
+    const hint = document.createElement("div");
+    hint.className = "pma-update-hint";
+    hint.innerHTML = " ou <code>git pull</code> dans le dossier de l'extension";
+    hint.prepend(releasesLink);
+
+    bar.append(head, hint);
+
+    if (info.entries && info.entries.length) {
+      const details = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = "Nouveautés";
+      details.appendChild(summary);
+
+      for (const entry of info.entries) {
+        const block = document.createElement("div");
+        block.className = "pma-update-entry";
+
+        const title = document.createElement("strong");
+        title.textContent = `v${entry.version}${entry.date ? " · " + entry.date : ""}`;
+        block.appendChild(title);
+
+        const list = document.createElement("ul");
+        for (const note of entry.notes || []) {
+          const li = document.createElement("li");
+          li.textContent = note;
+          list.appendChild(li);
+        }
+        block.appendChild(list);
+        details.appendChild(block);
+      }
+      bar.appendChild(details);
+    }
+
+    const dismiss = document.createElement("button");
+    dismiss.type = "button";
+    dismiss.className = "pma-update-dismiss";
+    dismiss.textContent = "×";
+    dismiss.addEventListener("click", () => {
+      chrome.storage.local.set({ pma_update_dismissed: info.version });
+      bar.remove();
+    });
+    bar.appendChild(dismiss);
+
+    panel.insertBefore(bar, panel.querySelector("#pma-body"));
+  }
+
+  async function refresh() {
+    const { pma_update_info: info, pma_update_dismissed: dismissed } = await chrome.storage.local.get([
+      "pma_update_info",
+      "pma_update_dismissed",
+    ]);
+    if (info && info.version !== dismissed) render(info);
+  }
+
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === "local" && changes.pma_update_info) refresh();
+  });
+
+  refresh();
 }
 
 export function setHeaderSource(panel, source) {

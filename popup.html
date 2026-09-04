@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Pimp my Admin</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 14px;
+      width: 280px;
+      background: #38323f;
+      color: #eee;
+      font-family: sans-serif;
+      font-size: 13px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #ffd400;
+    }
+
+    #head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    #head img {
+      width: 26px;
+      height: 26px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 14px;
+      font-family: 'Kode Mono', monospace;
+      background: linear-gradient(90deg, rgb(198, 163, 255) 0%, rgb(255, 137, 193) 150%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    #status {
+      font-family: 'Kode Mono', monospace;
+      font-weight: 700;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    #status.ok {
+      background: #24ab6d33;
+      color: #7ee0b0;
+    }
+
+    #status.update {
+      background: #1e1e2e;
+      border-left: 3px solid #ffd400;
+      color: #ffd400;
+    }
+
+    #hint {
+      font-family: 'Kode Mono', monospace;
+      font-size: 11px;
+      color: #b9b3c4;
+      margin-bottom: 8px;
+    }
+
+    #hint code {
+      color: #ff0097;
+      font-weight: 700;
+    }
+
+    #notes {
+      font-size: 11px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    #notes .entry {
+      margin-bottom: 8px;
+    }
+
+    #notes strong {
+      color: #c6a3ff;
+    }
+
+    #notes ul {
+      margin: 4px 0 0;
+      padding-left: 16px;
+    }
+
+    #actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    button {
+      flex: 1;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Kode Mono', monospace;
+      background: #c6a3ff;
+      color: #1e1e2e;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    a#repo {
+      display: block;
+      margin-top: 10px;
+      font-size: 11px;
+      color: #b9b3c4;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="head">
+    <img src="https://violette-bleue.github.io/pimp-my-forum/img/logo.png" alt="" />
+    <h1>Pimp my Admin</h1>
+  </div>
+
+  <div id="status" class="ok">…</div>
+  <div id="hint" hidden><code>git pull</code> dans le dossier de l'extension ou télécharges la dernière release <a
+      href="https://github.com/violette-bleue/pimp-my-admin/releases" target="_blank">ici</a></div>
+  <div id="notes"></div>
+
+  <div id="actions">
+    <button type="button" id="check">Vérifier les mises à jour</button>
+    <button type="button" id="dismiss" hidden>Masquer</button>
+  </div>
+
+
+  <script src="popup.js"></script>
+</body>
+
+</html>

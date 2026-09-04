@@ -1,11 +1,14 @@
 import { extractCategoryLinks, extractTemplateRows, slugifyCategory } from "../shared/categories.js";
 import { sleep } from "../shared/util.js";
 import { resolveLocalFile } from "../source/source.js";
-import { loadScanCache, saveScanCache, compareWithCache } from "./scan-cache.js";
+import { loadScanCache, saveScanCache, compareWithCache } from "../shared/scan-cache.js";
+import { fetchLiveContent } from "./network.js";
+
+const MODULE_KEY = "templates";
 
 export async function buildInventory(source, index, { seed, onProgress, sleepMs = 50 } = {}) {
   const categories = extractCategoryLinks(document, location.href);
-  const scanCache = loadScanCache(source);
+  const scanCache = loadScanCache(source, MODULE_KEY);
   const entries = [];
 
   if (seed && seed.category && seed.entries) {
@@ -35,7 +38,7 @@ export async function buildInventory(source, index, { seed, onProgress, sleepMs 
         if (!fileHandle) {
           entry.status = "missing";
         } else {
-          const result = await compareWithCache(fileHandle, row.tplName, row.editUrl, scanCache);
+          const result = await compareWithCache(fileHandle, row.tplName, row.editUrl, scanCache, fetchLiveContent);
           entry.localContent = result.localContent;
           entry.mtime = result.mtime;
           entry.status = result.status;
@@ -49,6 +52,6 @@ export async function buildInventory(source, index, { seed, onProgress, sleepMs 
     }
   }
 
-  saveScanCache(source, scanCache);
+  saveScanCache(source, MODULE_KEY, scanCache);
   return { entries, scanCache };
 }

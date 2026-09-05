@@ -1,7 +1,16 @@
 [
   {
+    "version": "0.1.2",
+    "date": "2026-09-05",
+    "notes": [
+      "Corrections UI diverses",
+      "Correction d'une mauvaise correspondance entre les permissions du hub et celles de FA",
+      "Bug connu : extension qui ne s'éxécute pas pour les forums qui auraient une ancienne adresse type forumactif.org et non strictement forumactif.fr (fix à venir)"
+    ]
+  },
+  {
     "version": "0.1.1",
-    "date": "2026-09-03",
+    "date": "2026-09-04",
     "notes": [
       "Hub catégories/forums : métadonnées + gestion de masse",
       "Notifications des mises à jour de l'extension",
@@ -11,7 +20,7 @@
   },
   {
     "version": "0.1.0",
-    "date": "2026-09-02",
+    "date": "2026-08-28",
     "notes": [
       "Synchronisation des templates avec un dossier local",
       "Export / Import des templates",

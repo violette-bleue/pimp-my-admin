@@ -1,0 +1,51 @@
+name: Discord release announcement
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verifier que le webhook est configure
+        id: check
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "DISCORD_WEBHOOK non configure (Settings > Secrets and variables > Actions) -- annonce ignoree."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Poster sur Discord
+        if: steps.check.outputs.skip == 'false'
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          RELEASE_NAME: ${{ github.event.release.name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          RELEASE_BODY: ${{ github.event.release.body }}
+        run: |
+          BODY_TRUNC=$(printf '%s' "$RELEASE_BODY" | head -c 4000)
+          ZIP_URL=$(jq -r '.release.assets[] | select(.name | endswith(".zip")) | .browser_download_url' "$GITHUB_EVENT_PATH" | head -n 1)
+          ZIP_NAME=$(jq -r '.release.assets[] | select(.name | endswith(".zip")) | .name' "$GITHUB_EVENT_PATH" | head -n 1)
+
+          if [ -n "$ZIP_URL" ]; then
+            PAYLOAD=$(jq -n \
+              --arg title "$RELEASE_NAME" \
+              --arg url "$RELEASE_URL" \
+              --arg desc "$BODY_TRUNC" \
+              --arg fname "Telechargement" \
+              --arg fvalue "[$ZIP_NAME]($ZIP_URL)" \
+              '{embeds: [{title: $title, url: $url, description: $desc, color: 9109759, fields: [{name: $fname, value: $fvalue}]}]}')
+          else
+            PAYLOAD=$(jq -n \
+              --arg title "$RELEASE_NAME" \
+              --arg url "$RELEASE_URL" \
+              --arg desc "$BODY_TRUNC" \
+              '{embeds: [{title: $title, url: $url, description: $desc, color: 9109759}]}')
+          fi
+
+          curl -sf -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "$DISCORD_WEBHOOK"

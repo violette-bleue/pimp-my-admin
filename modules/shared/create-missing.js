@@ -11,7 +11,7 @@ export function mountCreateMissing(container, { index, rows, network, createTrig
 
   const head = document.createElement("div");
   head.className = "pma-icon-label";
-  setIconContent(head, "icons8-rocket-32", `${missing.length} ${itemNoun}(s) local(aux) sans équivalent FA`);
+  setIconContent(head, "icons8-rocket-32", `${missing.length} ${itemNoun} disponibles localement`);
   wrapper.appendChild(head);
 
   if (!createTrigger) {

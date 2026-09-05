@@ -907,7 +907,6 @@ tr[data-pma-status="missing"] * {
   gap            : var(--gap);
   position       : relative;
   justify-content: flex-start;
-  align-items    : center;
   justify-content: center;
 }
 
@@ -1319,6 +1318,7 @@ tr.pma-drop-nest {
   flex-direction: column;
   align-items   : flex-start;
   gap           : var(--gap);
+  margin-bottom : var(--padding);
 }
 
 #pma-create-missing-list>li {
@@ -1326,6 +1326,24 @@ tr.pma-drop-nest {
   flex-direction: row-reverse;
   align-items   : center;
   gap           : var(--gap);
+}
+
+#pma-create-missing>.pma-icon-label::after {
+  content   : 'Tu peux les ajouter individuellement en cliquant sur le +';
+  width     : 100%;
+  font-style: italic;
+  font-size : 11px;
+  padding   : 0 0 10px;
+  opacity   : 50%;
+}
+
+#pma-create-missing>.pma-icon-label {
+  display  : flex;
+  flex-wrap: wrap;
+}
+
+#pma-create-missing-list button {
+  padding: 1px !important;
 }
 
 /* ==========================================================================

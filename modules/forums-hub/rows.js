@@ -5,6 +5,7 @@ function extractActions(p, baseUrl) {
     if (!href) continue;
     const url = new URL(href, baseUrl);
     const mode = url.searchParams.get("mode");
+    if (mode === "auth") url.searchParams.set("extended_auth", "1");
     actions[mode || "view"] = url.href;
   }
   return actions;

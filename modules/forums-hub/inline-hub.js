@@ -343,6 +343,15 @@ function isDescendantOfCategory(ctx, entity, categoryId) {
   return false;
 }
 
+// Forum id parmi les descendants (sous-forums) de entity
+function isDescendantOfEntity(entity, id) {
+  for (const child of entity.children || []) {
+    if (child.id === id) return true;
+    if (isDescendantOfEntity(child, id)) return true;
+  }
+  return false;
+}
+
 function indexEntities(categories, map) {
   for (const cat of categories) {
     map.set(cat.id, cat);
@@ -426,6 +435,13 @@ function buildInlineHubContent(categories, rootCreateUrl, selection) {
     checkboxesByEntity: new Map(),
     draggedId: null,
     onDrop(draggedId, target, zone) {
+      // Deposer un forum sur un de ses propres descendants (avant/apres OU
+      // nest) casserait l'arbre : le parent retire de `categories` avant que
+      // findContainer() cherche encore son ancien id (before/after), ou une
+      // boucle parent<->enfant serait creee (nest) — refuser silencieusement
+      const draggedEntity = ctx.entityById.get(draggedId);
+      if (draggedEntity && isDescendantOfEntity(draggedEntity, target.id)) return;
+
       const dragged = removeEntity(categories, draggedId);
       if (!dragged) return;
 

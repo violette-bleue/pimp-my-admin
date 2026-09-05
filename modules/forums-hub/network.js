@@ -14,13 +14,6 @@ async function loadForm(url) {
   const doc = new DOMParser().parseFromString(html, "text/html");
   const form = doc.forms["edit"];
   if (!form) throw new StaleFormError();
-
-  // Tid périmé : ForumActif rend un formulaire valide mais lié au forum
-  // précédemment sélectionné dans la session, pas au fid demandé
-  const expectedFid = new URL(url).searchParams.get("fid");
-  const selectedId = form.querySelector('[name="selected_id"]')?.value;
-  if (expectedFid && selectedId && selectedId !== expectedFid) throw new StaleFormError();
-
   return form;
 }
 
